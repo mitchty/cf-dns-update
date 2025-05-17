@@ -1,5 +1,5 @@
 {
-  description = "Build a cargo project";
+  description = "Update dns records in cloudflare";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -15,13 +15,12 @@
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      crane,
-      flake-utils,
-      advisory-db,
-      ...
+    { self
+    , nixpkgs
+    , crane
+    , flake-utils
+    , advisory-db
+    , ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -34,7 +33,7 @@
         src = craneLib.cleanCargoSource ./.;
 
         # Common arguments can be set here to avoid repeating them later
-        commonArgs = {
+        commonArgs = rec {
           inherit src;
           strictDeps = true;
 
@@ -45,7 +44,16 @@
             ++ lib.optionals pkgs.stdenv.isDarwin [
               # Additional darwin specific inputs can be set here
               pkgs.libiconv
+            ] ++ lib.optionals pkgs.stdenv.isLinux [
+              pkgs.pkg-config
+              pkgs.openssl
             ];
+
+          OPENSSL_DIR = "${pkgs.openssl.dev}";
+          OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+          OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include/";
+
+          LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${ lib.makeLibraryPath buildInputs }";
 
           # Additional environment variables can be set directly
           # MY_CUSTOM_VAR = "some value";

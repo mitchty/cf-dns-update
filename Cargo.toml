@@ -1,5 +1,5 @@
 [package]
-name = "quick-start"
+name = "dns-update"
 version = "0.1.0"
 edition = "2021"
 license = "Blue Oak Model License 1.0.0"
@@ -7,3 +7,37 @@ license = "Blue Oak Model License 1.0.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { version = "~4.5.38", features = ["derive"] }
+reqwest = { version = "0.12", features = ["json", "blocking", "rustls-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Make dev profile fast but chonky boi files opt-level 0 is *slightly* faster,
+# barely but its also murder on cpu caches.
+#
+# Given dev is more for rapid iteration with an eye on not being ass, give it
+# minimal optimization.
+[profile.dev]
+opt-level = "z"
+
+[profile.dev.build-override]
+opt-level = "z"
+
+[profile.dev.package."*"]
+opt-level = "z"
+
+# All this is great just slow af so turn on when needed.
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = "z"
+
+[profile.release.build-override]
+codegen-units = 1
+opt-level = "z"
+strip = "debuginfo"
+
+[profile.release.package."*"]
+codegen-units = 1
+opt-level = "z"
+strip = "debuginfo"

@@ -1,0 +1,15 @@
+* dns-update
+
+This is just a *really* simple program to update cloudflare dns records with a token/zone id.
+
+Why should be obvious, I wanted to update one of my subdomain records with an ip address dynamically.
+
+Usage:
+
+#+begin_src sh
+dns-update --token $YOURTOKEN --zone $YOURZONE --record subdomain.example.tld --ip 1.2.3.4
+#+end_src
+
+Pretty basic, error handling is at best an afterthought. Minimal time was invested in this thing and now that it works I'm just letting it be.
+
+It probably should be able to be cargo installed but I use nix so no idea to be honest. Pr's welcome to fix anything I didn't have the motivation to make good from the start.
