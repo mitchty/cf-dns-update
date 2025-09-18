@@ -32,13 +32,13 @@ struct UpdateDnsRecordRequest<'a> {
 )]
 
 struct Cli {
-    #[arg(short, long)]
+    #[arg(short, long, env = "CF_TOKEN")]
     token: String,
 
-    #[arg(short, long)]
+    #[arg(short, long, env = "CF_ZONE")]
     zone: String,
 
-    #[arg(short, long)]
+    #[arg(short, long, env = "CF_RECORD")]
     record: String,
 
     #[arg(short, long)]
