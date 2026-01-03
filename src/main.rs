@@ -14,6 +14,7 @@ struct DnsRecordListResponse {
 #[derive(Deserialize)]
 struct DnsRecord {
     id: String,
+    content: String,
 }
 
 #[derive(Serialize)]
@@ -67,6 +68,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         .json()?;
 
     if let Some(record) = res.result.first() {
+        let current_ip = &record.content;
+
         let update_req = UpdateDnsRecordRequest {
             r#type: "A",
             name: &cli.record,
@@ -87,10 +90,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             .send()?;
 
         if update_res.status().is_success() {
-            println!(
-                "DNS record {} updated to {} successfully.",
-                cli.record, cli.ip
-            );
+            println!("{} {} -> {}", cli.record, current_ip, cli.ip);
         } else {
             println!(
                 "Failed to update DNS record {} to {}: {:?}",
