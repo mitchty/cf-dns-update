@@ -2,7 +2,7 @@
   description = "Update dns records in cloudflare";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     crane.url = "github:ipetkov/crane";
 
@@ -15,12 +15,13 @@
   };
 
   outputs =
-    { self
-    , nixpkgs
-    , crane
-    , flake-utils
-    , advisory-db
-    , ...
+    {
+      self,
+      nixpkgs,
+      crane,
+      flake-utils,
+      advisory-db,
+      ...
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
@@ -37,23 +38,23 @@
           inherit src;
           strictDeps = true;
 
-          buildInputs =
-            [
-              # Add additional build inputs here
-            ]
-            ++ lib.optionals pkgs.stdenv.isDarwin [
-              # Additional darwin specific inputs can be set here
-              pkgs.libiconv
-            ] ++ lib.optionals pkgs.stdenv.isLinux [
-              pkgs.pkg-config
-              pkgs.openssl
-            ];
+          buildInputs = [
+            # Add additional build inputs here
+          ]
+          ++ lib.optionals pkgs.stdenv.isDarwin [
+            # Additional darwin specific inputs can be set here
+            pkgs.libiconv
+          ]
+          ++ lib.optionals pkgs.stdenv.isLinux [
+            pkgs.pkg-config
+            pkgs.openssl
+          ];
 
           OPENSSL_DIR = "${pkgs.openssl.dev}";
           OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
           OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include/";
 
-          LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${ lib.makeLibraryPath buildInputs }";
+          LD_LIBRARY_PATH = "$LD_LIBRARY_PATH:${lib.makeLibraryPath buildInputs}";
 
           # Additional environment variables can be set directly
           # MY_CUSTOM_VAR = "some value";
@@ -149,7 +150,8 @@
           # MY_CUSTOM_DEVELOPMENT_VAR = "something else";
 
           # Extra inputs can be added here; cargo and rustc are provided by default.
-          packages = [
+          packages = with pkgs; [
+            cargo-edit
             # pkgs.ripgrep
           ];
         };
