@@ -44,6 +44,9 @@ struct Cli {
 
     #[arg(short, long)]
     ip: String,
+
+    #[arg(short, long)]
+    force: bool,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -70,8 +73,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     if let Some(record) = res.result.first() {
         let current_ip = &record.content;
 
-        // Ip is the same as dns record, nothing to do
-        if current_ip == &cli.ip {
+        // IP is the same as dns record, nothing to do unless --force is present
+        if !cli.force && current_ip == &cli.ip {
             return Ok(());
         }
 
