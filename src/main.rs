@@ -70,6 +70,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     if let Some(record) = res.result.first() {
         let current_ip = &record.content;
 
+        // Ip is the same as dns record, nothing to do
+        if current_ip == &cli.ip {
+            return Ok(());
+        }
+
         let update_req = UpdateDnsRecordRequest {
             r#type: "A",
             name: &cli.record,
